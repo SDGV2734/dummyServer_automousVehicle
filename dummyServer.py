@@ -12,12 +12,17 @@ def generate_temperature():
     return round(random.uniform(-30, 50), 2)  # Temperature in °C
 
 def generate_gps():
-    latitude = round(random.uniform(-90, 90), 6)  # Latitudef
+    latitude = round(random.uniform(-90, 90), 6)  # Latitude
     longitude = round(random.uniform(-180, 180), 6)  # Longitude
     return {"latitude": latitude, "longitude": longitude}
 
 def generate_battery_level():
     return round(random.uniform(0, 100), 2)  # Battery level in percentage
+
+# Route for root URL
+@app.route('/')
+def index():
+    return "Welcome to the Dummy Web Server!"
 
 # Routes to fetch the data
 @app.route('/sensor_data', methods=['GET'])

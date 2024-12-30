@@ -14,4 +14,4 @@ def display_video():
     return render_template('preview.html', video_name=video_name)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)  # Specify port 5001 here

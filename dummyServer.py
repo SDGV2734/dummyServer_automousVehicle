@@ -1,40 +1,63 @@
-from flask import Flask, jsonify
+import asyncio
+import websockets
 import random
-import time
+import json
+import cv2
+import base64
 
-app = Flask(__name__)
+async def car_dashboard_server(websocket):
+    speed = 0
+    battery_level = 100
+    latitude, longitude = 37.7749, -122.4194  # Starting GPS coordinates (San Francisco)
 
-# Helper functions to generate random data
-def generate_speed():
-    return round(random.uniform(0, 200), 2)  # Speed in km/h
+    # Open video file or webcam
+    video_capture = cv2.VideoCapture("/Users/sonamdorjighalley/Desktop/Dummy server /cameraFeed.mp4") # Use 0 for webcam or replace with video file path
 
-def generate_temperature():
-    return round(random.uniform(-30, 50), 2)  # Temperature in °C
+    while True:
+        # Simulate speed (accelerating and decelerating)
+        if random.choice([True, False]):
+            speed = min(120, speed + random.uniform(0.5, 2.0))
+        else:
+            speed = max(0, speed - random.uniform(0.5, 2.0))
 
-def generate_gps():
-    latitude = round(random.uniform(-90, 90), 6)  # Latitude
-    longitude = round(random.uniform(-180, 180), 6)  # Longitude
-    return {"latitude": latitude, "longitude": longitude}
+        # Simulate temperature
+        temperature = random.uniform(70, 100)  # Example range in Fahrenheit
 
-def generate_battery_level():
-    return round(random.uniform(0, 100), 2)  # Battery level in percentage
+        # Simulate GPS coordinates
+        latitude += random.uniform(-0.0001, 0.0001)
+        longitude += random.uniform(-0.0001, 0.0001)
 
-# Route for root URL
-@app.route('/')
-def index():
-    return "Welcome to the Dummy Web Server!"
+        # Simulate battery level
+        battery_level = max(0, battery_level - random.uniform(0.01, 0.1))
 
-# Routes to fetch the data
-@app.route('/sensor_data', methods=['GET'])
-def get_sensor_data():
-    data = {
-        "speed": generate_speed(),
-        "temperature": generate_temperature(),
-        "gps": generate_gps(),
-        "battery_level": generate_battery_level(),
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-    }
-    return jsonify(data)
+        # Capture video frame
+        ret, frame = video_capture.read()
+        if ret:
+            # Encode frame as base64 to send over WebSocket
+            _, buffer = cv2.imencode('.jpg', frame)
+            frame_data = base64.b64encode(buffer).decode('utf-8')
+        else:
+            frame_data = None
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        # Create data packet
+        data = {
+            "speed": round(speed, 2),
+            "temperature": round(temperature, 2),
+            "gps": {"latitude": round(latitude, 6), "longitude": round(longitude, 6)},
+            "battery_level": round(battery_level, 2),
+            "video_frame": frame_data,
+        }
+
+        # Send data packet as JSON
+        await websocket.send(json.dumps(data))
+
+        # Wait for a short period to simulate real-time updates
+        await asyncio.sleep(0.1)
+
+async def main():
+    async with websockets.serve(car_dashboard_server, "localhost", 8765):
+        print("Server started at ws://localhost:8765")
+        await asyncio.Future()  # Run forever
+
+if __name__ == "__main__":
+    asyncio.run(main())

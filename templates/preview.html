@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,4 +14,47 @@
 </html>
 
 
+ -->
 
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Dashboard Video</title>
+</head>
+<body>
+  <h1>Car Dashboard Video</h1>
+  <div>
+    <img id="video-frame" alt="Video Feed" style="width: 640px; height: 480px;" />
+  </div>
+
+  <script>
+    // Connect to WebSocket server
+    const websocket = new WebSocket('ws://localhost:8765');
+
+    websocket.onmessage = (event) => {
+      // Parse the received JSON data
+      const data = JSON.parse(event.data);
+
+      // Check if video_frame is present
+      if (data.video_frame) {
+        // Get the <img> element
+        const imgElement = document.getElementById('video-frame');
+
+        // Set the Base64 string as the image source
+        imgElement.src = `data:image/jpeg;base64,${data.video_frame}`;
+      }
+    };
+
+    websocket.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+    };
+
+    websocket.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+  </script>
+</body>
+</html>

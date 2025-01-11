@@ -21,7 +21,7 @@ async def car_dashboard_server(websocket):
             speed = max(0, speed - random.uniform(0.5, 2.0))
 
         # Simulate temperature
-        temperature = random.uniform(70, 100)  # Example range in Fahrenheit
+        temperature = random.uniform(-10, 50)  # Example range in Fahrenheit
 
         # Simulate GPS coordinates
         latitude += random.uniform(-0.0001, 0.0001)

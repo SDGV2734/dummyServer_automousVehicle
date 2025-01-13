@@ -11,7 +11,8 @@ async def car_dashboard_server(websocket):
     latitude, longitude = 37.7749, -122.4194  # Starting GPS coordinates (San Francisco)
 
     # Open video file or webcam
-    video_capture = cv2.VideoCapture("/Users/sonamdorjighalley/Desktop/Dummy server /cameraFeed.mp4") # Use 0 for webcam or replace with video file path
+    video_capture = cv2.VideoCapture(r"/Users/yontenkinleytenzin/Desktop/dummyServer_automousVehicle/cameraFeed.mp4")
+
 
     while True:
         # Simulate speed (accelerating and decelerating)

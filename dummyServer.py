@@ -57,7 +57,7 @@ async def car_dashboard_server(websocket):
 async def main():
     async with websockets.serve(car_dashboard_server, "localhost", 8765):
         print("Server started at ws://localhost:8765")
-        await asyncio.Future()  # Run forever
+        await asyncio.Future()  # Run forever or until Ctrl+C
 
 if __name__ == "__main__":
     asyncio.run(main())
